@@ -14,10 +14,7 @@ export default function Home() {
       return;
     }
 
-    const apiUrl = new URL(process.env.NEXT_PUBLIC_DEADROP_API_URL!);
-    apiUrl.pathname = '/auth/token';
-
-    const res = await fetch(apiUrl.toString(), {
+    const res = await fetch('/api/token', {
       headers: {
         Authorization: `Bearer ${sessionToken}`,
         'Content-Type': 'application/json',
@@ -27,7 +24,7 @@ export default function Home() {
     const payload = await res.json();
 
     if (typeof redirectUrl === 'string') {
-      const localhostRedirect = new URL(redirectUrl);
+      const localhostRedirect = new URL(decodeURIComponent(redirectUrl));
       localhostRedirect.searchParams.set('token', payload.token);
 
       window.location.href = localhostRedirect.href;
@@ -36,12 +33,12 @@ export default function Home() {
 
   return (
     <div
-      className={`grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
+      className={`flex justify-center items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}
     >
       <SignedOut>
         <SignIn
           routing={'hash'}
-          forceRedirectUrl={`/auth/cli?redirectUrl=${redirectUrl}`}
+          forceRedirectUrl={`/?redirectUrl=${redirectUrl}`}
         />
       </SignedOut>
       <SignedIn>

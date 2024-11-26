@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { auth, clerkClient } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+import { clerkClient, getAuth } from '@clerk/nextjs/server';
 
 type CreateSignInTokenSuccess = {
   token: string;
@@ -8,7 +7,7 @@ type CreateSignInTokenSuccess = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CreateSignInTokenSuccess>,
+  res: NextApiResponse<CreateSignInTokenSuccess | string>,
 ) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
@@ -16,10 +15,9 @@ export default async function handler(
     return;
   }
 
-  const { userId } = await auth();
+  const { userId } = getAuth(req);
 
-  if (!userId)
-    return new NextResponse('Unauthorized', { status: 401 });
+  if (!userId) return res.status(401).send('Unauthorized');
 
   const client = await clerkClient();
 
@@ -28,8 +26,5 @@ export default async function handler(
     expiresInSeconds: 20,
   });
 
-  return NextResponse.json<CreateSignInTokenSuccess>(
-    { token },
-    { status: 200 },
-  );
+  return res.status(200).json({ token });
 }
