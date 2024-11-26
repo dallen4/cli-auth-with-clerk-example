@@ -6,6 +6,9 @@
   "author": "nieky",
   "license": "UNLICENSED",
   "private": false,
+  "scripts": {
+    "build": "node ./esbuild.js"
+  },
   "dependencies": {
     "@clerk/clerk-js": "5.22.3",
     "@hono/node-server": "^1.13.5",

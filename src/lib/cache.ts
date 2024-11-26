@@ -19,7 +19,7 @@ export async function readAuthCache() {
 
   const authCacheConfig = await readFile(getAuthCachePath(), 'utf-8');
 
-  return JSON.parse(authCacheConfig).config as AuthCache;
+  return JSON.parse(authCacheConfig) as AuthCache;
 }
 
 export async function writeAuthCache(cache: AuthCache) {
