@@ -13,14 +13,14 @@ myCli.command('login').action(async () => {
   const clerkClient = await createClerkClient();
 
   if (clerkClient.session) {
-    console.info(
-      `You're already signed in as ${clerkClient.session.user.emailAddresses[0]}!`,
-    );
+    const email = clerkClient.session.user.emailAddresses[0];
+
+    console.info(`You're already signed in as ${email}!`);
 
     return process.exit(0);
   }
 
-  const { listenForAuthRedirect } = await createLocalAuthServer();
+  const { listenForAuthRedirect } = createLocalAuthServer();
 
   const newUrl = new URL(WEB_APP_URL);
   newUrl.searchParams.set('redirectUrl', LOCALHOST_AUTH_URL);

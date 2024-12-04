@@ -7,6 +7,7 @@ export default function Home() {
   const { redirectUrl } = router.query;
 
   const getTokenAndRedirect = async () => {
+    // 1. get token for current user's session if one exists
     const sessionToken = await clerk.session!.getToken();
 
     if (!sessionToken) {
@@ -14,6 +15,7 @@ export default function Home() {
       return;
     }
 
+    // 2. call our API endpoint to create a sign-in token
     const res = await fetch('/api/token', {
       headers: {
         Authorization: `Bearer ${sessionToken}`,
@@ -21,11 +23,15 @@ export default function Home() {
       },
     });
 
-    const payload = await res.json();
+    const { token }: { token: string } = await res.json();
 
+    // 3. parse query param and navigate to redirect destination
     if (typeof redirectUrl === 'string') {
-      const localhostRedirect = new URL(decodeURIComponent(redirectUrl));
-      localhostRedirect.searchParams.set('token', payload.token);
+      const decodedUrl = decodeURIComponent(redirectUrl);
+
+      const localhostRedirect = new URL(decodedUrl);
+
+      localhostRedirect.searchParams.set('token', token);
 
       window.location.href = localhostRedirect.href;
     }
@@ -36,10 +42,7 @@ export default function Home() {
       className={`flex justify-center items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}
     >
       <SignedOut>
-        <SignIn
-          routing={'hash'}
-          forceRedirectUrl={`/?redirectUrl=${redirectUrl}`}
-        />
+        <SignIn forceRedirectUrl={`/?redirectUrl=${redirectUrl}`} />
       </SignedOut>
       <SignedIn>
         <h1>myCLI Authentication</h1>
