@@ -11,7 +11,9 @@ const clerkFactory = () => {
 
     clerkInstance = new Clerk(process.env.CLERK_PUBLISHABLE_KEY!);
 
-    clerkInstance.__unstable__onBeforeRequest(async (requestInit) => {
+    const fapiClient = clerkInstance.getFapiClient();
+
+    fapiClient.onBeforeRequest(async (requestInit) => {
       requestInit.credentials = 'omit';
 
       requestInit.url?.searchParams.append('_is_native', '1');
@@ -25,7 +27,7 @@ const clerkFactory = () => {
         );
     });
 
-    clerkInstance.__unstable__onAfterResponse(async (_, response) => {
+    fapiClient.onAfterResponse(async (_, response) => {
       const authHeader = response?.headers.get('authorization');
 
       if (authHeader)
