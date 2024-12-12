@@ -42,7 +42,10 @@ export default function Home() {
       className={`flex justify-center items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}
     >
       <SignedOut>
-        <SignIn forceRedirectUrl={`/?redirectUrl=${redirectUrl}`} />
+        <SignIn
+          routing={'hash'}
+          forceRedirectUrl={`/?redirectUrl=${redirectUrl}`}
+        />
       </SignedOut>
       <SignedIn>
         <h1>myCLI Authentication</h1>
